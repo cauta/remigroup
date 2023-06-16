@@ -8,7 +8,7 @@ remigroup = "79FsDa6rQT7ATFyQcZna56VEdDBcimcsehaPB7ktxtZe"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Localnet"
+cluster = "testnet"
 wallet = "/Users/trongcauta/.config/solana/id.json"
 
 [scripts]
