@@ -14,7 +14,7 @@ import { newAccountWithLamports } from './new-account-with-lamports';
 import { sleep } from './sleep';
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes';
 import * as connection from './connection';
-require('dotenv').config({ path: '.env' })
+require('dotenv').config({ path: `.env.${process.env.NODE_ENV}` })
 
 const SWAP_PROGRAM_OWNER_FEE_ADDRESS =
   process.env.SWAP_PROGRAM_OWNER_FEE_ADDRESS;
@@ -81,7 +81,7 @@ export async function createMoveToken(connection: Connection, payer: Keypair, ow
     return { tokenAccountA, mintA };
 }
 
-export async function initSolToken(connection: Connection, payer: Keypair, owner: Keypair, tokenSwapAccount: Keypair, currentSwapTokenB: bigint): Promise<PublicKey> {
+export async function initSolToken(connection: Connection, payer: Keypair, owner: Keypair, tokenSwapAccount: Keypair, currentSwapTokenB: bigint): Promise<{mintB: PublicKey, tokenAccountB: PublicKey}> {
     // Native SOL: So11111111111111111111111111111111111111112
     console.log('\init token B');
     const [authority, bumpSeed] = await PublicKey.findProgramAddressSync(
@@ -104,7 +104,7 @@ export async function initSolToken(connection: Connection, payer: Keypair, owner
     console.log('\ncreating token B account');
     let tokenAccountB = await createAccount(connection, payer, mintB, authority, Keypair.generate());
     console.log("\ntokenAccountB: " + tokenAccountB);
-    console.log('\nminting token B to swap');
-    await mintTo(connection, payer, mintB, tokenAccountB, owner, currentSwapTokenB);
-    return mintB;
+    // console.log('\nminting token B to swap');
+    // await mintTo(connection, payer, mintB, tokenAccountB, owner, currentSwapTokenB);
+    return {mintB, tokenAccountB};
 }
