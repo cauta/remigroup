@@ -28,7 +28,6 @@ export async function createPool(connection: Connection, tokenSwapAccount: Keypa
 
     console.log("\nauthority:" + authority.toBase58());
 
-
     console.log('\ncreating pool mint');
     let tokenPool = await createMint(
         connection,
@@ -81,30 +80,32 @@ export async function createMoveToken(connection: Connection, payer: Keypair, ow
     return { tokenAccountA, mintA };
 }
 
-export async function initSolToken(connection: Connection, payer: Keypair, owner: Keypair, tokenSwapAccount: Keypair, currentSwapTokenB: bigint): Promise<{mintB: PublicKey, tokenAccountB: PublicKey}> {
+export async function initSolToken(connection: Connection, payer: Keypair, owner: Keypair, tokenSwapAccount: Keypair, mintBProgramId: PublicKey, currentSwapTokenB: bigint): 
+                    Promise<{tokenAccountB: PublicKey, mintB: PublicKey}> {
     // Native SOL: So11111111111111111111111111111111111111112
+    // let mintB = new PublicKey("So11111111111111111111111111111111111111112");
     console.log('\init token B');
     const [authority, bumpSeed] = await PublicKey.findProgramAddressSync(
         [tokenSwapAccount.publicKey.toBuffer()],
         TOKEN_SWAP_PROGRAM_ID,
     );
-    // mintB = await createMint(
-    //     connection,
-    //     payer,
-    //     owner.publicKey,
-    //     null,
-    //     2,
-    //     Keypair.generate(),
-    //     undefined,
-    //     mintBProgramId,
-    // );
-    // console.log("\nmintB: " + mintB);
-    const mintB = new PublicKey("So11111111111111111111111111111111111111112");
+    let mintB = await createMint(
+        connection,
+        payer,
+        owner.publicKey,
+        null,
+        2,
+        Keypair.generate(),
+        undefined,
+        mintBProgramId,
+    );
+    console.log("\nmintB: " + mintB);
+    
 
     console.log('\ncreating token B account');
     let tokenAccountB = await createAccount(connection, payer, mintB, authority, Keypair.generate());
     console.log("\ntokenAccountB: " + tokenAccountB);
-    // console.log('\nminting token B to swap');
-    // await mintTo(connection, payer, mintB, tokenAccountB, owner, currentSwapTokenB);
-    return {mintB, tokenAccountB};
+    console.log('\nminting token B to swap');
+    await mintTo(connection, payer, mintB, tokenAccountB, owner, currentSwapTokenB);
+    return {tokenAccountB, mintB};
 }

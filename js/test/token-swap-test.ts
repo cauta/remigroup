@@ -495,7 +495,6 @@ export async function swap(): Promise<void> {
   assert(info.amount == 0n);
 
   info = await getAccount(connection, userAccountB);
-  console.info(info)
   assert(info.amount == SWAP_AMOUNT_OUT);
 
   info = await getAccount(connection, tokenAccountA);

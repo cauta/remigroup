@@ -30,6 +30,8 @@ import * as token from './token'
 
 require('dotenv').config({ path: `.env.${process.env.NODE_ENV}` })
 
+const SOLANA_PROGRAM_ID = new PublicKey("So11111111111111111111111111111111111111112");
+
 let connection: Connection;
 
 // The following globals are created by `createTokenSwap` and used by subsequent tests
@@ -127,7 +129,7 @@ export async function createTokenSwap(
     tokenAccountA = rs.tokenAccountA;
     mintA = rs.mintA;
   });
-  await token.initSolToken(connection, payer, owner, tokenSwapAccount, currentSwapTokenB).then(rs => {
+  await token.initSolToken(connection, payer, owner, tokenSwapAccount, TOKEN_PROGRAM_ID, currentSwapTokenB).then(rs => {
     mintB = rs.mintB;
     tokenAccountB = rs.tokenAccountB;
   });
@@ -177,32 +179,14 @@ export async function createTokenSwap(
   assert(fetchedTokenSwap.mintB.equals(mintB));
   assert(fetchedTokenSwap.poolToken.equals(tokenPool));
   assert(fetchedTokenSwap.feeAccount.equals(feeAccount));
-  assert(
-    TRADING_FEE_NUMERATOR == fetchedTokenSwap.tradeFeeNumerator
-  );
-  assert(
-    TRADING_FEE_DENOMINATOR == fetchedTokenSwap.tradeFeeDenominator
-  );
-  assert(
-    OWNER_TRADING_FEE_NUMERATOR ==
-    fetchedTokenSwap.ownerTradeFeeNumerator
-  );
-  assert(
-    OWNER_TRADING_FEE_DENOMINATOR ==
-    fetchedTokenSwap.ownerTradeFeeDenominator
-  );
-  assert(
-    OWNER_WITHDRAW_FEE_NUMERATOR ==
-    fetchedTokenSwap.ownerWithdrawFeeNumerator
-  );
-  assert(
-    OWNER_WITHDRAW_FEE_DENOMINATOR ==
-    fetchedTokenSwap.ownerWithdrawFeeDenominator
-  );
+  assert(TRADING_FEE_NUMERATOR == fetchedTokenSwap.tradeFeeNumerator);
+  assert(TRADING_FEE_DENOMINATOR == fetchedTokenSwap.tradeFeeDenominator);
+  assert(OWNER_TRADING_FEE_NUMERATOR == fetchedTokenSwap.ownerTradeFeeNumerator);
+  assert(OWNER_TRADING_FEE_DENOMINATOR == fetchedTokenSwap.ownerTradeFeeDenominator);
+  assert(OWNER_WITHDRAW_FEE_NUMERATOR == fetchedTokenSwap.ownerWithdrawFeeNumerator);
+  assert(OWNER_WITHDRAW_FEE_DENOMINATOR == fetchedTokenSwap.ownerWithdrawFeeDenominator);
   assert(HOST_FEE_NUMERATOR == fetchedTokenSwap.hostFeeNumerator);
-  assert(
-    HOST_FEE_DENOMINATOR == fetchedTokenSwap.hostFeeDenominator
-  );
+  assert(HOST_FEE_DENOMINATOR == fetchedTokenSwap.hostFeeDenominator);
   assert(curveType == fetchedTokenSwap.curveType);
 }
 
@@ -229,6 +213,7 @@ export async function depositAllTokenTypes(): Promise<void> {
   console.log('Creating depositor token b account');
   const userAccountB = await createAccount(connection, payer, mintB, owner.publicKey, Keypair.generate());
   await mintTo(connection, payer, mintB, userAccountB, owner, tokenB);
+  // await requestSolToken(connection, userAccountB, LAMPORTS_PER_SOL);
   await approve(
     connection,
     payer,
