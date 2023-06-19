@@ -25,15 +25,14 @@ export async function newAccountWithLamports(
 export async function requestSolToken(connection: Connection,
   address: PublicKey,
   lamports: number = 1000000,
-): Promise<Keypair> {
-  const account = Keypair.generate();
-
+): Promise<void> {
+  let preBalance = await connection.getBalance(address);
   let retries = 30;
   await connection.requestAirdrop(address, lamports);
   for (;;) {
     await sleep(500);
-    if (lamports == (await connection.getBalance(account.publicKey))) {
-      return account;
+    if (lamports + preBalance == (await connection.getBalance(address))) {
+      return ;
     }
     if (--retries <= 0) {
       break;
