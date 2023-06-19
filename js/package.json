@@ -38,12 +38,14 @@
     "lint:fix": "npm run pretty:fix && eslint . --fix",
     "build:program": "cargo build-sbf --manifest-path ../programs/token-swap/Cargo.toml",
     "pretty": "prettier --check '{,???/**/}*.ts'",
-    "pretty:fix": "prettier --write '{,???/**/}*.ts'"
+    "pretty:fix": "prettier --write '{,???/**/}*.ts'",
+    "init-testnet": "ts-node src/init.ts"
   },
   "keywords": [],
   "dependencies": {
     "@solana/buffer-layout": "^4.0.0",
-    "@solana/web3.js": "^1.42.0"
+    "@solana/web3.js": "^1.42.0",
+    "dotenv": "^16.3.1"
   },
   "devDependencies": {
     "@solana/spl-token": "0.3.8",
