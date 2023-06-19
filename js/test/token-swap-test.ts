@@ -98,7 +98,7 @@ export async function createTokenSwap(
   owner = await newAccountWithLamports(connection, 1000000000);
   const tokenSwapAccount = Keypair.generate();
 
-  [authority, bumpSeed] = await PublicKey.findProgramAddress(
+  [authority, bumpSeed] = PublicKey.findProgramAddressSync(
     [tokenSwapAccount.publicKey.toBuffer()],
     TOKEN_SWAP_PROGRAM_ID,
   );
@@ -495,6 +495,7 @@ export async function swap(): Promise<void> {
   assert(info.amount == 0n);
 
   info = await getAccount(connection, userAccountB);
+  console.info(info)
   assert(info.amount == SWAP_AMOUNT_OUT);
 
   info = await getAccount(connection, tokenAccountA);
