@@ -22,13 +22,13 @@ import {
 } from '@solana/spl-token';
 
 import { TokenSwap, CurveType, TOKEN_SWAP_PROGRAM_ID } from '..';
-import { newAccountWithLamports } from './new-account-with-lamports';
+import { newAccountWithLamports, requestSolToken } from './new-account-with-lamports';
 import { sleep } from './sleep';
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes';
 import getConnection from './connection';
 import * as token from './token'
 
-require('dotenv').config({ path: '.env' })
+require('dotenv').config({ path: `.env.${process.env.NODE_ENV}` })
 
 let connection: Connection;
 
@@ -116,11 +116,21 @@ export async function createTokenSwap(
     TOKEN_SWAP_PROGRAM_ID,
   );
 
-  let { tokenAccountPool, tokenPool, feeAccount } = await token.createPool(connection, tokenSwapAccount, payer, owner);
+  await token.createPool(connection, tokenSwapAccount, payer, owner).then(rs => {
+    tokenAccountPool = rs.tokenAccountPool;
+    tokenPool = rs.tokenPool;
+    feeAccount = rs.feeAccount;
+  });
 
   // Init tokenA and TokenB for pool liquidity
-  let { tokenAccountA, mintA } = await token.createMoveToken(connection, payer, owner, tokenSwapAccount, TOKEN_PROGRAM_ID, currentSwapTokenA);
-  mintB = await token.initSolToken(connection, payer, owner, tokenSwapAccount, currentSwapTokenB);
+  await token.createMoveToken(connection, payer, owner, tokenSwapAccount, TOKEN_PROGRAM_ID, currentSwapTokenA).then(rs => {
+    tokenAccountA = rs.tokenAccountA;
+    mintA = rs.mintA;
+  });
+  await token.initSolToken(connection, payer, owner, tokenSwapAccount, currentSwapTokenB).then(rs => {
+    mintB = rs.mintB;
+    tokenAccountB = rs.tokenAccountB;
+  });
 
   sleep(10000);
   console.log('\ncreating token swap');
