@@ -1,5 +1,5 @@
 import { Connection } from "@solana/web3.js";
-require('dotenv').config({ path: '.env' })
+require('dotenv').config({ path: `.env.${process.env.NODE_ENV}` })
 
 let connection: Connection;
 export default async function getConnection(): Promise<Connection> {

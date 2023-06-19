@@ -39,7 +39,8 @@
     "build:program": "cargo build-sbf --manifest-path ../programs/token-swap/Cargo.toml",
     "pretty": "prettier --check '{,???/**/}*.ts'",
     "pretty:fix": "prettier --write '{,???/**/}*.ts'",
-    "init-testnet": "ts-node src/init.ts"
+    "init-testnet": "NODE_ENV=testnet ts-node src/init.ts",
+    "init-local": "NODE_ENV=local ts-node src/init.ts"
   },
   "keywords": [],
   "dependencies": {
