@@ -33,3 +33,24 @@ Token                                         Balance
 -----------------------------------------------------
 AsipeKV7JsvdRm53SxzgLgyT3XRrAp8npaZUkjsCR2ez  1000000
 ```
+
+# build token-swap
+```bash
+$ cd programs/token-swap
+$ cargo build
+$ anchor build
+
+$ solana program deploy ../../target/deploy/spl_token_swap.so
+Blockhash expired. 4 retries remaining
+Program Id: GHycX7Bxopndrsm4aCbVi32UoN1tA5uSxiQKpzHqBJhV
+
+$ solana program show GHycX7Bxopndrsm4aCbVi32UoN1tA5uSxiQKpzHqBJhV
+
+Program Id: GHycX7Bxopndrsm4aCbVi32UoN1tA5uSxiQKpzHqBJhV
+Owner: BPFLoaderUpgradeab1e11111111111111111111111
+ProgramData Address: 4AWduaKcF8oMv6GLRBAgvjfapkANg3uYKjGS9Borweyk
+Authority: 4ATRce7hYTCbU7tsgZrbUZBF5ByRsvn82miN2VU2ewUU
+Last Deployed In Slot: 203282943
+Data Length: 432992 (0x69b60) bytes
+Balance: 3.0148284 SOL
+```
