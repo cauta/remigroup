@@ -54,3 +54,9 @@ Last Deployed In Slot: 203282943
 Data Length: 432992 (0x69b60) bytes
 Balance: 3.0148284 SOL
 ```
+
+# Build token swap
+```bash
+$ cd js
+$ npm run init-testnet
+```
