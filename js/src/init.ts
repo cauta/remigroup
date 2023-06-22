@@ -19,7 +19,7 @@ import { sleep } from './util/sleep';
     console.log(
       'Run test: createTokenSwap (constant product, used further in tests)',
     );
-    await createTokenSwap(CurveType.ConstantProduct);
+    // await createTokenSwap(CurveType.ConstantProduct);
     console.log('Run test: deposit all token types');
     await depositAllTokenTypes();
     console.log('Run test: withdraw all token types');

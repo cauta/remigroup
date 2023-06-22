@@ -7,10 +7,10 @@ import {
     sendAndConfirmTransaction,
     LAMPORTS_PER_SOL
 } from '@solana/web3.js';
-import { approve, createMint, createAccount, createApproveInstruction, createInitializeAccountInstruction, getAccount, getMint, getMinimumBalanceForRentExemptAccount, mintTo, AccountLayout, TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { NATIVE_MINT, approve, createMint, createAccount, createApproveInstruction, createInitializeAccountInstruction, getAccount, getMint, getMinimumBalanceForRentExemptAccount, mintTo, AccountLayout, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 
 import { TokenSwap, CurveType, TOKEN_SWAP_PROGRAM_ID } from '..';
-import { newAccountWithLamports } from './new-account-with-lamports';
+import { newAccountWithLamports, requestSolToken } from './new-account-with-lamports';
 import { sleep } from './sleep';
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes';
 import * as connection from './connection';
@@ -55,7 +55,7 @@ export async function createPool(connection: Connection, tokenSwapAccount: Keypa
 
 export async function createMoveToken(connection: Connection, payer: Keypair, owner: Keypair, tokenSwapAccount: Keypair, tokenProgramId: PublicKey, currentSwapTokenA: bigint): Promise<{ tokenAccountA: PublicKey, mintA: PublicKey }> {
     console.log('\ncreating token MOVE');
-    const [authority, bumpSeed] = await PublicKey.findProgramAddressSync(
+    const [authority, bumpSeed] = PublicKey.findProgramAddressSync(
         [tokenSwapAccount.publicKey.toBuffer()],
         TOKEN_SWAP_PROGRAM_ID,
     );
@@ -83,29 +83,30 @@ export async function createMoveToken(connection: Connection, payer: Keypair, ow
 export async function initSolToken(connection: Connection, payer: Keypair, owner: Keypair, tokenSwapAccount: Keypair, mintBProgramId: PublicKey, currentSwapTokenB: bigint): 
                     Promise<{tokenAccountB: PublicKey, mintB: PublicKey}> {
     // Native SOL: So11111111111111111111111111111111111111112
-    // let mintB = new PublicKey("So11111111111111111111111111111111111111112");
-    console.log('\init token B');
-    const [authority, bumpSeed] = await PublicKey.findProgramAddressSync(
+    let mintB = new PublicKey("So11111111111111111111111111111111111111112");
+    // console.log('\init token B');
+    const [authority, bumpSeed] = PublicKey.findProgramAddressSync(
         [tokenSwapAccount.publicKey.toBuffer()],
         TOKEN_SWAP_PROGRAM_ID,
     );
-    let mintB = await createMint(
-        connection,
-        payer,
-        owner.publicKey,
-        null,
-        2,
-        Keypair.generate(),
-        undefined,
-        mintBProgramId,
-    );
+    // let mintB = await createMint(
+    //     connection,
+    //     payer,
+    //     owner.publicKey,
+    //     null,
+    //     2,
+    //     Keypair.generate(),
+    //     undefined,
+    //     mintBProgramId,
+    // );
     console.log("\nmintB: " + mintB);
     
 
     console.log('\ncreating token B account');
     let tokenAccountB = await createAccount(connection, payer, mintB, authority, Keypair.generate());
     console.log("\ntokenAccountB: " + tokenAccountB);
-    console.log('\nminting token B to swap');
-    await mintTo(connection, payer, mintB, tokenAccountB, owner, currentSwapTokenB);
+    // console.log('\nminting token B to swap');
+    // await mintTo(connection, payer, mintB, tokenAccountB, owner, currentSwapTokenB);
+    await requestSolToken(connection, tokenAccountB, LAMPORTS_PER_SOL);
     return {tokenAccountB, mintB};
 }

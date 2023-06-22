@@ -212,8 +212,8 @@ export async function depositAllTokenTypes(): Promise<void> {
   );
   console.log('Creating depositor token b account');
   const userAccountB = await createAccount(connection, payer, mintB, owner.publicKey, Keypair.generate());
-  await mintTo(connection, payer, mintB, userAccountB, owner, tokenB);
-  // await requestSolToken(connection, userAccountB, LAMPORTS_PER_SOL);
+  // await mintTo(connection, payer, mintB, userAccountB, owner, tokenB);
+  await requestSolToken(connection, userAccountB, LAMPORTS_PER_SOL);
   await approve(
     connection,
     payer,
